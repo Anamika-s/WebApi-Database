@@ -7,30 +7,38 @@ namespace WebApi_Database.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StudentController : ControllerBase
+    public class Student1Controller : ControllerBase
     {
         IStudentRepo _repo;
-        public StudentController(IStudentRepo repo)
+        public Student1Controller(IStudentRepo repo)
         {
             _repo = repo;
         }
         [HttpGet]
-        public List<Student> GetStudents()
+        public IActionResult GetStudents()
         {
-            return _repo.GetStudents();
+            if (_repo.GetStudents().ToList().Count == 0)
+                return NotFound();
+            else
+
+                return Ok(_repo.GetStudents());
         }
 
         [HttpGet("{id}")]
 
-        public Student GetStudentById(int id)
+        public IActionResult GetStudentById(int id)
         {
-            return _repo.GetStudentById(id);
-        }
+            if (_repo.GetStudentById(id) == null)
+                return NotFound("There is no rec");
+            else 
+            return  Ok(_repo.GetStudentById(id));
+        } 
 
         [HttpPost]
-        public void AddStudent(Student student)
+        public IActionResult AddStudent(Student student)
         {
             _repo.AddStudent(student);
+          return Created("Created", student);
         }
 
         [HttpPut("{id}")]

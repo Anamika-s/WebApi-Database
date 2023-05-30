@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi_Database.IRepo;
 using WebApi_Database.Models;
@@ -7,6 +8,7 @@ namespace WebApi_Database.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class StudentController : ControllerBase
     {
         IStudentRepo _repo;
@@ -26,6 +28,7 @@ namespace WebApi_Database.Controllers
         {
             return _repo.GetStudentById(id);
         }
+
 
         [HttpPost]
         public void AddStudent(Student student)

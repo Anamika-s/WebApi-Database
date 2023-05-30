@@ -7,6 +7,7 @@ namespace WebApi_Database.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class Student2Controller : ControllerBase
     {
         IStudentRepo _repo;

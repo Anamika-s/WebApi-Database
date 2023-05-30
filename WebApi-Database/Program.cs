@@ -1,4 +1,9 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using WebApi_Database.Context;
 using WebApi_Database.IRepo;
 using WebApi_Database.Repo;
@@ -28,6 +33,21 @@ namespace WebApi_Database
 
 
             });
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+ValidAudience = builder.Configuration["Jwt:Issuer"],
+IssuerSigningKey = new
+SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+};
+        });
             builder.Services.AddTransient<IStudentRepo, StudentRepo>();
             var app = builder.Build();
 
@@ -35,7 +55,7 @@ namespace WebApi_Database
 
             app.UseSwagger();
             app.UseSwaggerUI();
-
+            app.UseAuthentication();
             app.UseAuthorization();
             
             

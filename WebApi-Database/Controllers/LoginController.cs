@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using WebApi_Database.Models;
 using WebApi_Database.Context;
+using System.Security.Claims;
 
 namespace WebApi_Database.Controllers
 {
@@ -28,20 +29,30 @@ namespace WebApi_Database.Controllers
             var user = Authenticate(User);
             if (user != null)
             {
-                var tokenString = GenerateJSONWebToken(user);
+                var tokenString = 
+                    GenerateJSONWebToken(user.Id, user.Password, user.RoleId);
                 response = Ok(new { token = tokenString });
             }
             return response;
         }
-        private string GenerateJSONWebToken(User user)
+        private string GenerateJSONWebToken(int Id, string password, int role)
         {
+            Claim[] claims = new[]
+         {
+                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                 new Claim(JwtRegisteredClaimNames.Sid, Id.ToString()),
+                 new Claim(JwtRegisteredClaimNames.Email, password),
+                 new Claim(ClaimTypes.Role, role.ToString()),
+                 new Claim(type:"Date", DateTime.Now.ToString())
+            };
             var securityKey = new
             SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+           
             var credentials = new SigningCredentials(securityKey,
             SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-_config["Jwt:Issuer"],
-null,
+           _config["Jwt:Issuer"],
+            claims,
 expires: DateTime.Now.AddMinutes(120),
 signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -51,7 +62,8 @@ signingCredentials: credentials);
         {
             User obj = _context.Users.FirstOrDefault(x => x.UserName == user.UserName
             && x.Password == user.Password);
-            return user;
+             
+            return obj;
         }
     }
 

@@ -3,10 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using WebApi_Database.Context;
 using WebApi_Database.IRepo;
 using WebApi_Database.Repo;
+using WebApi_Database.Models;
 
 namespace WebApi_Database
 {
@@ -26,6 +29,7 @@ namespace WebApi_Database
                     Description = "Its a dummy web api"
                 });
             });
+            builder.Services.AddCors();
             builder.Services.AddControllers();
             builder.Services.AddDbContext<StudentDbContext>(options =>
             {
@@ -33,6 +37,7 @@ namespace WebApi_Database
 
 
             });
+         
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
             {
@@ -53,6 +58,7 @@ SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
 
             // Configure the HTTP request pipeline.
 
+            app.UseCors();
             app.UseSwagger();
             app.UseSwaggerUI();
             app.UseAuthentication();

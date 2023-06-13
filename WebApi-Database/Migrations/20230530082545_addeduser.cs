@@ -31,9 +31,9 @@ namespace WebApi_Database.Migrations
                 columns: new[] { "Id", "Password", "UserName" },
                 values: new object[,]
                 {
-                    { 1, "user1", "user1" },
-                    { 2, "user2", "user2" },
-                    { 3, "user3", "user3" }
+                    { 1, "user1", "user1",1 },
+                    { 2, "user2", "user2",2 },
+                    { 3, "user3", "user3",3 }
                 });
         }
 

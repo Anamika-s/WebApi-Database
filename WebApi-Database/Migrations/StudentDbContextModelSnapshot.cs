@@ -21,6 +21,23 @@ namespace WebApi_Database.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("WebApi_Database.Models.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
             modelBuilder.Entity("WebApi_Database.Models.Student", b =>
                 {
                     b.Property<int>("Id")
@@ -30,6 +47,10 @@ namespace WebApi_Database.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DocumentId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -57,33 +78,29 @@ namespace WebApi_Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.HasIndex("RoleId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Password = "user1",
-                            UserName = "user1"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Password = "user2",
-                            UserName = "user2"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Password = "user3",
-                            UserName = "user3"
-                        });
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("WebApi_Database.Models.User", b =>
+                {
+                    b.HasOne("WebApi_Database.Models.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
                 });
 #pragma warning restore 612, 618
         }
